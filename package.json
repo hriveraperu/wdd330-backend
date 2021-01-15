@@ -1,5 +1,5 @@
 {
-  "name": "outside-backend",
+  "name": "wdd330-backend",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -7,7 +7,7 @@
     "start-json": "json-server --watch ./database.json",
     "start": "node server.js"
   },
-  "author": "",
+  "author": "Shane Thompson",
   "license": "ISC",
   "dependencies": {
     "json-server": "^0.15.0",
