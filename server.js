@@ -99,9 +99,61 @@ server.get('/products/search/:query',(req,res) => {
 
 // checkout
 server.post('/checkout',(req,res) => {
-  const { order } = req.body;
-
-  res.status(200).json("Working"); 
+  const  order  = req.body;
+  let error = false;
+  let errorMsg = {};
+  console.log(order);
+  // check for required fields
+  if(!order.orderDate) {
+    error = true;
+    errorMsg.orderDate = 'No Order Date';
+  } 
+  if(!order.fname) {
+    error = true;
+    errorMsg.fname = 'No First Name';
+  } 
+  if(!order.lname) {
+    error = true;
+    errorMsg.lname = 'No Last Name';
+  } 
+  if(!order.street || !order.city || !order.state || !order.zip) {
+    error = true;
+    errorMsg.address = 'Missing or incomplete address';
+  } 
+  if(!order.cardNumber) {
+    error = true;
+    errorMsg.cardNumber = 'No card number';
+  } else if(order.cardNumber !== '1234123412341234') {
+    // check for valid number
+        error = true;
+        errorMsg.cardNumber = 'Invalid Card Number';
+    
+  }
+  if(!order.expiration) {
+    error = true;
+    errorMsg.expiration = 'Missing card expiration';
+  } else {
+    const parts = order.expiration.split('/')
+    console.log(parts);
+    if(parts[0] > 0 && parts[0] <= 12 && parts[1]) {
+      const expireDate = new Date(parseInt('20'+parts[1]), parseInt(parts[0])-1, 1);
+      const curDate = new Date();
+      
+      console.log(parts[0], parts[1], expireDate);
+      console.log(curDate);
+      if(expireDate < curDate) {
+        error = true;
+        errorMsg.expiration = 'Card expired';
+      }
+    } else {
+      error = true;
+        errorMsg.expiration = 'Invalid expiration date';
+    }
+  }
+  if(error) {
+    res.status(400).json(errorMsg);
+  } else
+      res.status(200).json({ orderId: 1234, message: "Order Placed" }); 
  });
 
 server.use((req, res, next) => {
