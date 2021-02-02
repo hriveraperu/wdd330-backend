@@ -16,7 +16,7 @@
     },
     {
       "email": "user3@email.com",
-      "password": "$2a$10$gFzBsVMWTJAB3H81DDDS3.iGM4lVCBh9SMlfAipzyHnd/X17mk9y6",
+      "password": "user3",
       "id": 3
     }
   ],
@@ -53,6 +53,38 @@
       "userId": "user1@email.com",
       "createdAt": 1559159640285,
       "id": 12
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "fname": "test",
+      "lname": "t",
+      "street": "asda",
+      "city": "Rexburg",
+      "state": "ID",
+      "zip": "8",
+      "cardNumber": "1234123412341234",
+      "expiration": "2/21",
+      "code": "123",
+      "orderDate": "2021-01-29T22:20:38.633Z",
+      "orderTotal": "753.98",
+      "tax": "42.00",
+      "shipping": 12,
+      "items": [
+        {
+          "id": "989CH",
+          "price": 349.99,
+          "name": "The North Face Assault Tent - 3-Person, 3-Season",
+          "quantity": 1
+        },
+        {
+          "id": "989CH",
+          "price": 349.99,
+          "name": "The North Face Assault Tent - 3-Person, 3-Season",
+          "quantity": 1
+        }
+      ]
     }
   ]
 }

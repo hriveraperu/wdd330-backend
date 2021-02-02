@@ -47,7 +47,8 @@ function convertToJson(res) {
   if (res.ok) {
     return res.json();
   } else {
-    throw new Error('Bad Response');
+    console.log(res.statusText);
+    throw new Error(res.statusText);
   }
 }
 
@@ -67,15 +68,15 @@ server.post('/login', (req, res) => {
 const apiKey = "/?api_key=6ff8b372bdd0ca37da830f278129a7bf";
 const baseUrl = "http://api.sierratradingpost.com/api/1.0/";
 
-server.post('/proxy',(req,res) => {
+// server.post('/proxy',(req,res) => {
   
-  const { url } = req.body;
-  console.log(url);
-  fetch(url+apiKey).then(convertToJson).then((data) => {
-    res.status(200).json(data);
-  })
+//   const { url } = req.body;
+//   console.log(url);
+//   fetch(url+apiKey).then(convertToJson).then((data) => {
+//     res.status(200).json(data);
+//   })
 
-});
+// });
 
 server.get('/product/:id',(req,res) => {
   const id = req.params.id;
@@ -88,12 +89,13 @@ server.get('/product/:id',(req,res) => {
 });
 server.get('/products/search/:query',(req,res) => {
   const query = req.params.query;
+  console.log(baseUrl+'products/search~'+query+apiKey);
   fetch(baseUrl+'products/search~'+query+apiKey)
   .then(convertToJson)
   .then((data) => {
     res.status(200).json(data);
   })
-  .catch((err) => res.status(401).json(err));
+  .catch((err) => res.status(400).json(err));
 
 });
 
@@ -102,7 +104,7 @@ server.post('/checkout',(req,res) => {
   const  order  = req.body;
   let error = false;
   let errorMsg = {};
-  console.log(order);
+  // console.log(order);
   // check for required fields
   if(!order.orderDate) {
     error = true;
@@ -139,8 +141,7 @@ server.post('/checkout',(req,res) => {
       const expireDate = new Date(parseInt('20'+parts[1]), parseInt(parts[0])-1, 1);
       const curDate = new Date();
       
-      console.log(parts[0], parts[1], expireDate);
-      console.log(curDate);
+      
       if(expireDate < curDate) {
         error = true;
         errorMsg.expiration = 'Card expired';
@@ -152,8 +153,13 @@ server.post('/checkout',(req,res) => {
   }
   if(error) {
     res.status(400).json(errorMsg);
-  } else
-      res.status(200).json({ orderId: 1234, message: "Order Placed" }); 
+  } else {
+    const orders = router.db.get('orders');
+    const lastOrder = Math.max(...orders.map(o=>o.id));
+    order.id = lastOrder+1;
+    orders.push(order).write();
+      res.status(200).json({ orderId: order.id, message: "Order Placed" });
+  } 
  });
 
 server.use((req, res, next) => {
@@ -194,6 +200,7 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
 });
 
 server.use(router);
+
 
 server.listen(3000, () => {
   console.log('Run Auth API Server on port 3000');
