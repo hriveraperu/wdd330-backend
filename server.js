@@ -54,7 +54,7 @@ function convertToJson(res) {
 
 server.post('/login', (req, res) => {
   const { email, password } = req.body;
-
+console.log(email, password);
   if (isAuthenticated({ email, password }) === false) {
     const status = 401;
     const message = 'Incorrect username or password';

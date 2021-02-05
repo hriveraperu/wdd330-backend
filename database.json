@@ -85,6 +85,30 @@
           "quantity": 1
         }
       ]
+    },
+    {
+      "fname": "John",
+      "lname": "Doe",
+      "street": "123 Main",
+      "city": "Rexburg",
+      "state": "ID",
+      "zip": "83440",
+      "cardNumber": "1234123412341234",
+      "expiration": "3/21",
+      "code": "123",
+      "orderDate": "2021-02-05T22:19:07.770Z",
+      "orderTotal": "115.99",
+      "tax": "6.00",
+      "shipping": 10,
+      "items": [
+        {
+          "id": "889PR",
+          "price": 99.99,
+          "name": "Gregory Stout 45 Adjustable Backpack",
+          "quantity": 1
+        }
+      ],
+      "id": 2
     }
   ]
 }
