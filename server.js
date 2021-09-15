@@ -78,17 +78,18 @@ const baseUrl = "http://api.sierratradingpost.com/api/1.0/";
 
 // });
 
-server.get('/product/:id',(req,res) => {
+server.get('/product/:id',async (req,res) => {
   const id = req.params.id;
   // fetch(baseUrl+'product/'+id+apiKey)
   // .then(convertToJson)
   // .then((data) => {
   //   res.status(200).json(data);
   // }).catch((err) => res.status(401).json(err));
-  const products = router.db.get('products');
-  const product = products.find((product) => product.Id == id);
-  if(product.Id) {
-  res.status(200).json({ Result: product });
+  const products = await router.db.get('products');
+  const product = await products.find((product) => product.Id == id);
+  console.log(products);
+  if(product) {
+    res.status(200).json({ Result: product });
   } else {
     res.status(400).json({ Result: "No Product found" });
   }
