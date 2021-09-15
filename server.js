@@ -80,22 +80,38 @@ const baseUrl = "http://api.sierratradingpost.com/api/1.0/";
 
 server.get('/product/:id',(req,res) => {
   const id = req.params.id;
-  fetch(baseUrl+'product/'+id+apiKey)
-  .then(convertToJson)
-  .then((data) => {
-    res.status(200).json(data);
-  }).catch((err) => res.status(401).json(err));
-
+  // fetch(baseUrl+'product/'+id+apiKey)
+  // .then(convertToJson)
+  // .then((data) => {
+  //   res.status(200).json(data);
+  // }).catch((err) => res.status(401).json(err));
+  const products = router.db.get('products');
+  const product = products.find((product) => product.Id == id);
+  if(product.Id) {
+  res.status(200).json({ Result: product });
+  } else {
+    res.status(400).json({ Result: "No Product found" });
+  }
 });
 server.get('/products/search/:query',(req,res) => {
   const query = req.params.query;
-  console.log(baseUrl+'products/search~'+query+apiKey);
-  fetch(baseUrl+'products/search~'+query+apiKey)
-  .then(convertToJson)
-  .then((data) => {
-    res.status(200).json(data);
-  })
-  .catch((err) => res.status(400).json(err));
+  // console.log(baseUrl+'products/search~'+query+apiKey);
+  // fetch(baseUrl+'products/search~'+query+apiKey)
+  // .then(convertToJson)
+  // .then((data) => {
+  //   res.status(200).json(data);
+  // })
+  // .catch((err) => res.status(400).json(err));
+  const products = router.db.get('products');
+  const filtered = products.filter((product) => product.Category == query);
+   // const lastOrder = Math.max(...products.map(o=>o.id));
+   // order.id = lastOrder+1;
+   // products.push(order).write();
+   if(filtered) {
+      res.status(200).json({ Result: filtered });
+   } else {
+    res.status(200).json({ Result: "No products found" });
+   }
 
 });
 
