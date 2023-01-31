@@ -1,14 +1,18 @@
-const fs = require("fs");
-const jsonServer = require("json-server");
-const jwt = require("jsonwebtoken");
+// const fs = require("fs");
+import jsonServer from "json-server";
+// const jsonServer = require("json-server");
 
-const fetch = require("node-fetch");
-const bodyParser = require("body-parser");
+import jwt from "jsonwebtoken";
+// const jwt = require("jsonwebtoken");
+
+import fetch from "node-fetch";
+// import bodyParser from "json-server/lib/server/body-parser";
+// const bodyParser = require("body-parser");
 const server = jsonServer.create();
 const router = jsonServer.router("./database.json");
 
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json());
+// server.use(bodyParser.urlencoded({ extended: true }));
+// server.use(bodyParser.json());
 server.use(jsonServer.defaults());
 
 const SECRET_KEY = "123456789";
@@ -224,4 +228,4 @@ server.listen(3000, () => {
   console.log("Run Auth API Server on port 3000");
 });
 
-module.exports = server;
+export default server;
