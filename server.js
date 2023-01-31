@@ -1,19 +1,26 @@
-const fs = require('fs');
-const jsonServer = require('json-server');
-const jwt = require('jsonwebtoken');
-const fetch = require('node-fetch');
-const bodyParser = require('body-parser');
+const fs = require("fs");
+const https = require("https");
+const jsonServer = require("json-server");
+const jwt = require("jsonwebtoken");
+
+const options = {
+  key: fs.readFileSync("/srv/www/keys/my-site-key.pem"),
+  cert: fs.readFileSync("/srv/www/keys/chain.pem")
+};
+
+const fetch = require("node-fetch");
+const bodyParser = require("body-parser");
 const server = jsonServer.create();
-const router = jsonServer.router('./database.json');
+const router = jsonServer.router("./database.json");
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(jsonServer.defaults());
 
-const SECRET_KEY = '123456789';
+const SECRET_KEY = "123456789";
 
 // token timeout is set here
-const expiresIn = '1m';
+const expiresIn = "1m";
 
 // Create a token from a payload
 function createToken(payload) {
@@ -36,8 +43,8 @@ function isAuthenticated({ email, password }) {
   return (
     //userdb.users.findIndex(user => user.username === username && user.password === password) !== -1
     router.db
-      .get('users')
-      .findIndex(user => user.email === email && user.password === password)
+      .get("users")
+      .findIndex((user) => user.email === email && user.password === password)
       .value() !== -1
   );
 }
@@ -52,12 +59,12 @@ function convertToJson(res) {
   }
 }
 
-server.post('/login', (req, res) => {
+server.post("/login", (req, res) => {
   const { email, password } = req.body;
-console.log(email, password);
+  console.log(email, password);
   if (isAuthenticated({ email, password }) === false) {
     const status = 401;
-    const message = 'Incorrect username or password';
+    const message = "Incorrect username or password";
     res.status(status).json({ status, message });
     return;
   }
@@ -69,7 +76,7 @@ const apiKey = "/?api_key=6ff8b372bdd0ca37da830f278129a7bf";
 const baseUrl = "http://api.sierratradingpost.com/api/1.0/";
 
 // server.post('/proxy',(req,res) => {
-  
+
 //   const { url } = req.body;
 //   console.log(url);
 //   fetch(url+apiKey).then(convertToJson).then((data) => {
@@ -78,23 +85,23 @@ const baseUrl = "http://api.sierratradingpost.com/api/1.0/";
 
 // });
 
-server.get('/product/:id',async (req,res) => {
+server.get("/product/:id", async (req, res) => {
   const id = req.params.id;
   // fetch(baseUrl+'product/'+id+apiKey)
   // .then(convertToJson)
   // .then((data) => {
   //   res.status(200).json(data);
   // }).catch((err) => res.status(401).json(err));
-  const products = await router.db.get('products');
+  const products = await router.db.get("products");
   const product = await products.find((product) => product.Id == id);
   console.log(products);
-  if(product) {
+  if (product) {
     res.status(200).json({ Result: product });
   } else {
     res.status(400).json({ Result: "No Product found" });
   }
 });
-server.get('/products/search/:query',(req,res) => {
+server.get("/products/search/:query", (req, res) => {
   const query = req.params.query;
   // console.log(baseUrl+'products/search~'+query+apiKey);
   // fetch(baseUrl+'products/search~'+query+apiKey)
@@ -103,87 +110,88 @@ server.get('/products/search/:query',(req,res) => {
   //   res.status(200).json(data);
   // })
   // .catch((err) => res.status(400).json(err));
-  const products = router.db.get('products');
+  const products = router.db.get("products");
   const filtered = products.filter((product) => product.Category == query);
-   // const lastOrder = Math.max(...products.map(o=>o.id));
-   // order.id = lastOrder+1;
-   // products.push(order).write();
-   if(filtered) {
-      res.status(200).json({ Result: filtered });
-   } else {
+  // const lastOrder = Math.max(...products.map(o=>o.id));
+  // order.id = lastOrder+1;
+  // products.push(order).write();
+  if (filtered) {
+    res.status(200).json({ Result: filtered });
+  } else {
     res.status(200).json({ Result: "No products found" });
-   }
-
+  }
 });
 
 // checkout
-server.post('/checkout',(req,res) => {
-  const  order  = req.body;
+server.post("/checkout", (req, res) => {
+  const order = req.body;
   let error = false;
   let errorMsg = {};
   // console.log(order);
   // check for required fields
-  if(!order.orderDate) {
+  if (!order.orderDate) {
     error = true;
-    errorMsg.orderDate = 'No Order Date';
-  } 
-  if(!order.fname) {
-    error = true;
-    errorMsg.fname = 'No First Name';
-  } 
-  if(!order.lname) {
-    error = true;
-    errorMsg.lname = 'No Last Name';
-  } 
-  if(!order.street || !order.city || !order.state || !order.zip) {
-    error = true;
-    errorMsg.address = 'Missing or incomplete address';
-  } 
-  if(!order.cardNumber) {
-    error = true;
-    errorMsg.cardNumber = 'No card number';
-  } else if(order.cardNumber !== '1234123412341234') {
-    // check for valid number
-        error = true;
-        errorMsg.cardNumber = 'Invalid Card Number';
-    
+    errorMsg.orderDate = "No Order Date";
   }
-  if(!order.expiration) {
+  if (!order.fname) {
     error = true;
-    errorMsg.expiration = 'Missing card expiration';
+    errorMsg.fname = "No First Name";
+  }
+  if (!order.lname) {
+    error = true;
+    errorMsg.lname = "No Last Name";
+  }
+  if (!order.street || !order.city || !order.state || !order.zip) {
+    error = true;
+    errorMsg.address = "Missing or incomplete address";
+  }
+  if (!order.cardNumber) {
+    error = true;
+    errorMsg.cardNumber = "No card number";
+  } else if (order.cardNumber !== "1234123412341234") {
+    // check for valid number
+    error = true;
+    errorMsg.cardNumber = "Invalid Card Number";
+  }
+  if (!order.expiration) {
+    error = true;
+    errorMsg.expiration = "Missing card expiration";
   } else {
-    const parts = order.expiration.split('/')
+    const parts = order.expiration.split("/");
     console.log(parts);
-    if(parts[0] > 0 && parts[0] <= 12 && parts[1]) {
-      const expireDate = new Date(parseInt('20'+parts[1]), parseInt(parts[0])-1, 1);
+    if (parts[0] > 0 && parts[0] <= 12 && parts[1]) {
+      const expireDate = new Date(
+        parseInt("20" + parts[1]),
+        parseInt(parts[0]) - 1,
+        1
+      );
       const curDate = new Date();
-      
-      
-      if(expireDate < curDate) {
+
+      if (expireDate < curDate) {
         error = true;
-        errorMsg.expiration = 'Card expired';
+        errorMsg.expiration = "Card expired";
       }
     } else {
       error = true;
-        errorMsg.expiration = 'Invalid expiration date';
+      errorMsg.expiration = "Invalid expiration date";
     }
   }
-  if(error) {
+  if (error) {
     res.status(400).json(errorMsg);
   } else {
-    const orders = router.db.get('orders');
-    const lastOrder = Math.max(...orders.map(o=>o.id));
-    order.id = lastOrder+1;
+    const orders = router.db.get("orders");
+    const lastOrder = Math.max(...orders.map((o) => o.id));
+    order.id = lastOrder + 1;
     orders.push(order).write();
-      res.status(200).json({ orderId: order.id, message: "Order Placed" });
-  } 
- });
+    res.status(200).json({ orderId: order.id, message: "Order Placed" });
+  }
+});
 
 server.use((req, res, next) => {
-  if (req.method === 'POST') {
+  if (req.method === "POST") {
     const { authorization } = req.headers;
     if (authorization) {
-      const [scheme, token] = authorization.split(' ');
+      const [scheme, token] = authorization.split(" ");
       //jwt.verify(token, 'json-server-auth-123456');
       // Add claims to request
       req.claims = verifyToken(token);
@@ -197,16 +205,16 @@ server.use((req, res, next) => {
 server.use(/^(?!\/auth).*$/, (req, res, next) => {
   if (
     req.headers.authorization === undefined ||
-    req.headers.authorization.split(' ')[0] !== 'Bearer'
+    req.headers.authorization.split(" ")[0] !== "Bearer"
   ) {
     const status = 401;
-    const message = 'Error in authorization format';
+    const message = "Error in authorization format";
     res.status(status).json({ status, message });
     return;
   }
   try {
-    console.log('checking token');
-    verifyToken(req.headers.authorization.split(' ')[1]);
+    console.log("checking token");
+    verifyToken(req.headers.authorization.split(" ")[1]);
 
     next();
   } catch (err) {
@@ -218,7 +226,9 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
 
 server.use(router);
 
-
 server.listen(3000, () => {
-  console.log('Run Auth API Server on port 3000');
+  console.log("Run Auth API Server on port 3000");
 });
+// https.createServer(options, server).listen(3000);
+
+module.exports = server;
