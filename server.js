@@ -7,12 +7,12 @@ const jwt = require("jsonwebtoken");
 
 // import fetch from "node-fetch";
 // import bodyParser from "json-server/lib/server/body-parser";
-// const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 const server = jsonServer.create();
 const router = jsonServer.router("./database.json");
 
-// server.use(bodyParser.urlencoded({ extended: true }));
-// server.use(bodyParser.json());
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());
 server.use(jsonServer.defaults());
 
 const SECRET_KEY = "123456789";
