@@ -1,12 +1,12 @@
 const fs = require("fs");
-const https = require("https");
+// const https = require("https");
 const jsonServer = require("json-server");
 const jwt = require("jsonwebtoken");
 
-const options = {
-  key: fs.readFileSync("/srv/www/keys/my-site-key.pem"),
-  cert: fs.readFileSync("/srv/www/keys/chain.pem")
-};
+// const options = {
+//   key: fs.readFileSync("/srv/www/keys/my-site-key.pem"),
+//   cert: fs.readFileSync("/srv/www/keys/chain.pem")
+// };
 
 const fetch = require("node-fetch");
 const bodyParser = require("body-parser");
