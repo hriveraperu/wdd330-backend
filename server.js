@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 // import bodyParser from "json-server/lib/server/body-parser";
 const bodyParser = require("body-parser");
 const server = jsonServer.create();
-const router = jsonServer.router("./database.json");
+const router = jsonServer.router("database.json");
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
