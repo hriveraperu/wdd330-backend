@@ -1,12 +1,6 @@
 const fs = require("fs");
-// const https = require("https");
 const jsonServer = require("json-server");
 const jwt = require("jsonwebtoken");
-
-// const options = {
-//   key: fs.readFileSync("/srv/www/keys/my-site-key.pem"),
-//   cert: fs.readFileSync("/srv/www/keys/chain.pem")
-// };
 
 const fetch = require("node-fetch");
 const bodyParser = require("body-parser");
@@ -229,6 +223,5 @@ server.use(router);
 server.listen(3000, () => {
   console.log("Run Auth API Server on port 3000");
 });
-// https.createServer(options, server).listen(3000);
 
 module.exports = server;
