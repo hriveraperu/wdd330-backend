@@ -3,7 +3,10 @@
     "builds": [
       {
         "src": "server.js",
-        "use": "@now/node"
+        "use": "@now/node",
+        "config": {
+            "includeFiles": ["database.json"]
+          }
       }
     ],
     "routes": [
