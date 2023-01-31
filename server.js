@@ -1,11 +1,11 @@
-// const fs = require("fs");
-import jsonServer from "json-server";
-// const jsonServer = require("json-server");
+const fs = require("fs");
+// import jsonServer from "json-server";
+const jsonServer = require("json-server");
 
-import jwt from "jsonwebtoken";
-// const jwt = require("jsonwebtoken");
+// import  jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
-import fetch from "node-fetch";
+// import fetch from "node-fetch";
 // import bodyParser from "json-server/lib/server/body-parser";
 // const bodyParser = require("body-parser");
 const server = jsonServer.create();
@@ -228,4 +228,4 @@ server.listen(3000, () => {
   console.log("Run Auth API Server on port 3000");
 });
 
-export default server;
+module.exports = server;
