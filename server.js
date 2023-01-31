@@ -1,15 +1,26 @@
 const fs = require("fs");
+const clone = require("clone");
+const data = require("./database.json");
 // import jsonServer from "json-server";
 const jsonServer = require("json-server");
 
 // import  jwt from "jsonwebtoken";
 const jwt = require("jsonwebtoken");
 
+const isProductionEnv = process.env.NODE_ENV === "production";
+
 // import fetch from "node-fetch";
 // import bodyParser from "json-server/lib/server/body-parser";
 const bodyParser = require("body-parser");
 const server = jsonServer.create();
-const router = jsonServer.router("database.json");
+// const router = jsonServer.router("database.json");
+// For mocking the POST request, POST request won't make any changes to the DB in production environment
+const router = jsonServer.router(
+  isProductionEnv ? clone(data) : "database.json",
+  {
+    _isFake: isProductionEnv
+  }
+);
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
@@ -221,7 +232,10 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
     res.status(status).json({ status, message });
   }
 });
-
+server.use((req, res, next) => {
+  if (req.path !== "/") router.db.setState(clone(data));
+  next();
+});
 server.use(router);
 
 server.listen(3000, () => {
