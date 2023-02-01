@@ -14,6 +14,7 @@ const isProductionEnv = process.env.NODE_ENV === "production";
 const bodyParser = require("body-parser");
 const server = jsonServer.create();
 // const router = jsonServer.router("database.json");
+
 // For mocking the POST request, POST request won't make any changes to the DB in production environment
 const router = jsonServer.router(
   isProductionEnv ? clone(data) : "database.json",
@@ -25,6 +26,12 @@ const router = jsonServer.router(
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(jsonServer.defaults());
+if (isProductionEnv) {
+  server.use((req, res, next) => {
+    if (req.path !== "/") router.db.setState(clone(data));
+    next();
+  });
+}
 
 const SECRET_KEY = "123456789";
 
@@ -232,10 +239,7 @@ server.use(/^(?!\/auth).*$/, (req, res, next) => {
     res.status(status).json({ status, message });
   }
 });
-server.use((req, res, next) => {
-  if (req.path !== "/") router.db.setState(clone(data));
-  next();
-});
+
 server.use(router);
 
 server.listen(3000, () => {
