@@ -1,6 +1,6 @@
 const fs = require("fs");
 const clone = require("clone");
-const data = require("./database.json");
+const data = require("./db.json");
 // import jsonServer from "json-server";
 const jsonServer = require("json-server");
 

@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start-json": "json-server --watch ./database.json",
-    "start": "NODE_ENV=production node server.js"
+    "vercel": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=development node server.js"
   },
   "author": "Shane Thompson",
   "license": "ISC",
