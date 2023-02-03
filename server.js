@@ -218,27 +218,27 @@ server.use((req, res, next) => {
   // Continue to JSON Server router
   next();
 });
-// server.use(/^(?!\/auth).*$/, (req, res, next) => {
-//   if (
-//     req.headers.authorization === undefined ||
-//     req.headers.authorization.split(" ")[0] !== "Bearer"
-//   ) {
-//     const status = 401;
-//     const message = "Error in authorization format";
-//     res.status(status).json({ status, message });
-//     return;
-//   }
-//   try {
-//     console.log("checking token");
-//     verifyToken(req.headers.authorization.split(" ")[1]);
+server.use(/^(?!\/auth).*$/, (req, res, next) => {
+  if (
+    req.headers.authorization === undefined ||
+    req.headers.authorization.split(" ")[0] !== "Bearer"
+  ) {
+    const status = 401;
+    const message = "Error in authorization format";
+    res.status(status).json({ status, message });
+    return;
+  }
+  try {
+    console.log("checking token");
+    verifyToken(req.headers.authorization.split(" ")[1]);
 
-//     next();
-//   } catch (err) {
-//     const status = 401;
-//     const message = err.message;
-//     res.status(status).json({ status, message });
-//   }
-// });
+    next();
+  } catch (err) {
+    const status = 401;
+    const message = err.message;
+    res.status(status).json({ status, message });
+  }
+});
 
 server.use(router);
 
