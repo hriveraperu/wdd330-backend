@@ -91,8 +91,13 @@ server.post("/login", (req, res) => {
 server.post("/users", (req, res) => {
   const { email, password } = req.body;
   console.log(email, password);
-
-  res.status(200).json({ message: `User created: ${email}` });
+  if (email && password) {
+    res.status(200).json({ message: `User created: ${email}` });
+  } else {
+    res
+      .status(400)
+      .json({ message: `Create failed: Email and password required` });
+  }
 });
 
 const apiKey = "/?api_key=6ff8b372bdd0ca37da830f278129a7bf";
