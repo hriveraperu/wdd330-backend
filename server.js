@@ -84,7 +84,7 @@ server.post("/login", (req, res) => {
     res.status(status).json({ status, message });
     return;
   }
-  const accessToken = createToken({ email, password });
+  const accessToken = createToken({ email });
   res.status(200).json({ accessToken });
 });
 
