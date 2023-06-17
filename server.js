@@ -3,6 +3,7 @@ const clone = require("clone");
 const data = require("./db.json");
 // import jsonServer from "json-server";
 const jsonServer = require("json-server");
+const cors = require("cors");
 
 // import  jwt from "jsonwebtoken";
 const jwt = require("jsonwebtoken");
@@ -22,7 +23,7 @@ const router = jsonServer.router(
     _isFake: isProductionEnv
   }
 );
-
+server.use(cors());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(jsonServer.defaults());
